@@ -2,6 +2,13 @@
 
 ![Overview of Services](overview_services.svg)
 
+## Get things running
+
+* Install stuff: `pip install -r requirements`
+* Run tests: `python -m unittest discover tests`
+* Ingest data: `python -m rag_machine.ingest`
+* Start chat server: `python -m rag_machine`
+
 ## Tech thoughts & reading
 
 * [Chunking strategies from pinecone using LangChain](https://www.pinecone.io/learn/chunking-strategies/)
@@ -12,7 +19,7 @@
 * [Using LangChain with Ollama in Python - from Ollama tutorials](https://github.com/ollama/ollama/blob/main/docs/tutorials/langchainpy.md) (this uses the Odyssey by Homer as test data 😉).
 
 ## Todo
-* Switch to langchain Documents
+* Wrap writing ops in try/except
 * Talk top it via whisper & bark
 * Make sure LLM runs locally with MLX
 * Rename project to bastelGPT
@@ -20,4 +27,5 @@
 
 Logbook
 * 2024-03-13 Started the rewrite
+* 2024-03-21 Moved to using langchain documents
 

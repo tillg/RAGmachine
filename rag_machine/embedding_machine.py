@@ -38,11 +38,23 @@ class EmbeddingMachine:
         return self.collection.count()
 
     def add_documents(self, documents: List[Document]):
+        for document in documents:
+            document = self.chunk_machine.ensure_id_in_document(document)
         chunks = self.chunk_machine.chunkify_documents(documents)
 
+        # Add chunks to the collection
         chunk_page_content = [chunk.page_content for chunk in chunks]
         chunk_metadatas = [chunk.metadata for chunk in chunks]
         chunk_ids = [chunk.metadata['id'] for chunk in chunks]
-
         self.collection.add(documents=chunk_page_content,
                             metadatas=chunk_metadatas, ids=chunk_ids)
+
+        # Add initial documents to the collection
+        self.collection.add(documents=[document.page_content for document in documents],
+                            metadatas=[document.metadata for document in documents], ids=[document.metadata['id'] for document in documents])
+
+    def get_by_id(self, ids: List[str]):
+        collections_in_strange_format = self.collection.get(ids=ids)
+        documents = [Document(page_content=page_content, metadata=metadata) for page_content, metadata in zip(
+            collections_in_strange_format["documents"], collections_in_strange_format["metadatas"])]
+        return documents

@@ -49,7 +49,7 @@ Morbi pretium mauris gravida, viverra enim quis, eleifend erat. In viverra neque
 
     def test_metadata_preservation_and_id_overwrite(self):
         metadata = {"key": "value",
-                             "id": "original_id"}  # Set some metadata
+                             "id": "original_id"}  
         document = Document(page_content=self.document.page_content, metadata=metadata)  
         chunks = self.chunk_machine.chunkify_document(document)
         for chunk in chunks:

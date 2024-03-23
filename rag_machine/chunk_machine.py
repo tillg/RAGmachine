@@ -28,14 +28,25 @@ class ChunkMachine:
             length_function=len
         )
 
+    def ensure_id_in_document(self, document: Document) -> Document:
+        if document.metadata is None:
+            document.metadata = {}
+        if "id" not in document.metadata:
+            document.metadata["id"] = str(uuid.uuid4())
+        return document
+
+    def overwrite_id_in_document(self, document: Document) -> Document:
+        if document.metadata is None:
+            document.metadata = {}
+        document.metadata["id"] = str(uuid.uuid4())
+        return document
+
     def chunkify_document(self, document: Document) -> List[Document]:
         my_logger = get_logger("ChunkMachine.chunkify_document", logging.ERROR)
         chunks = self.text_splitter.create_documents(
             [document.page_content], metadatas=[document.metadata])
         for chunk in chunks:
-            if chunk.metadata is None:
-                chunk.metadata = {}
-            chunk.metadata["id"] = str(uuid.uuid4())
+            chunk = self.overwrite_id_in_document(chunk)
             if "id" in document.metadata:
                 chunk.metadata["original_document_id"] = document.metadata["id"]
         my_logger.debug(f"Chunkified in chunks of length: {
