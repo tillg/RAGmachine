@@ -5,3 +5,4 @@ __pycache__/
 messages.json
 data/tmp
 data/knowledge
+data/vectorDB

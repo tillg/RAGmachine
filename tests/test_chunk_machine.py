@@ -3,6 +3,7 @@ import unittest
 from rag_machine.chunk_machine import ChunkMachine
 from rag_machine.utils.utils import get_logger
 from langchain.docstore.document import Document
+from langchain_community.document_loaders import DirectoryLoader
 
 class TestChunkMachine(unittest.TestCase):
 
@@ -67,6 +68,14 @@ Morbi pretium mauris gravida, viverra enim quis, eleifend erat. In viverra neque
         document = Document(page_content="")  
         chunks = self.chunk_machine.chunkify_document(document)
         self.assertEqual(len(chunks), 0)
+
+    def test_chunkify_large_document(self):
+        logger = get_logger("test_chunkify_large_document", logging.INFO)
+        test_dir = "data/test/chunk_machine"
+        loader = DirectoryLoader(test_dir, glob="**/*.md", show_progress=False)
+        docs = loader.load()
+
+        chunks = self.chunk_machine.chunkify_documents(docs)
 
 if __name__ == '__main__':
     unittest.main()

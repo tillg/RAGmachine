@@ -42,20 +42,40 @@ class ChunkMachine:
         return document
 
     def chunkify_document(self, document: Document) -> List[Document]:
-        my_logger = get_logger("ChunkMachine.chunkify_document", logging.ERROR)
-        chunks = self.text_splitter.create_documents(
-            [document.page_content], metadatas=[document.metadata])
+        logger = get_logger("ChunkMachine.chunkify_document", logging.ERROR)
+        if not isinstance(document, Document):
+            logger.error(
+                f"Document is not an instance of Document: {document}. It is of type {type(document)}")
+            raise TypeError("document must be an instance of Document")
+        
+        try:
+            chunks = self.text_splitter.create_documents(
+                [document.page_content], metadatas=[document.metadata])
+        except Exception as e:
+            logger.error(
+                f"Error while chunkifying document: {robust_jsonify(document)}")
+            logger.error(f"Error: {e}")
+            raise
         for chunk in chunks:
             chunk = self.overwrite_id_in_document(chunk)
             if "id" in document.metadata:
                 chunk.metadata["original_document_id"] = document.metadata["id"]
-        my_logger.debug(f"Chunkified in chunks of length: {
+        logger.debug(f"Chunkified in chunks of length: {
                         [len(chunk.page_content) for chunk in chunks]}")
         return chunks
 
     def chunkify_documents(self, documents: List[Document]) -> List[Document]:
         logger = get_logger("ChunkMachine.chunkify_documents", logging.ERROR)
-        chunks = []
-        for document in documents:
-            chunks += self.chunkify_document(document)
+        if not isinstance(documents, list):
+            logger.error(
+                f"documents is not a list: {documents}. It is of type {type(documents)}")
+            raise TypeError(f"documents must be a list, not {type(documents)}")
+        if not all(isinstance(doc, Document) for doc in documents):
+            logger.error(
+                f"All elements in list are not instances of Document.")
+            raise TypeError("All elements in documents must be instances of Document")
+
+        #chunks = [self.chunkify_document(document) for document in documents]
+        chunks = [chunk for document in documents for chunk in self.chunkify_document(document)]
+
         return chunks

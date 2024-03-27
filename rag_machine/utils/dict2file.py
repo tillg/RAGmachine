@@ -2,8 +2,8 @@ import json
 import logging
 import os
 from typing import Dict, Optional
-from slack_ai.utils.robust_jsonify import robust_jsonify
-from slack_ai.utils.utils import get_logger, get_now_as_string
+from rag_machine.utils.robust_jsonify import robust_jsonify
+from rag_machine.utils.utils import get_logger, get_now_as_string
 
 def write_dict_to_file(*, dictionary: Dict, full_filename: str) -> Dict:
     """Writes a dictionary to a file. Also updates the _stats element."""
